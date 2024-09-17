@@ -1,13 +1,29 @@
-import whisperx
-import gc
-import os
-import json
-import gzip
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeElapsedColumn
 from rich.progress import track
-import re
-from datetime import timedelta, datetime
+from rich.progress import Spinner
+
+# Set up rich console for pretty printing
+console = Console()
+
+with console.status("[bold green]Loading whisperx...", spinner="dots") as status:
+    import whisperx
+    import gc
+    import os
+    import json
+    import gzip
+    import re
+    import yaml
+    from datetime import timedelta, datetime
+
+# Load configuration from the YAML file
+with open('app/config.yaml', 'r') as config_file:
+    config = yaml.safe_load(config_file)
+
+config_device = config.get("device", "cuda")
+config_batch_size = config.get("batch_size", 16)
+config_compute_type = config.get("compute_type", "float16")
+config_model_size = config.get("model_size", "large-v3")
 
 # Step 1
 # ---------------------------------------------------------------------------- #
@@ -15,12 +31,12 @@ from datetime import timedelta, datetime
 # ---------------------------------------------------------------------------- #
 def transcribe_audio_file(audio_file, progress):
     """Transcribe the given audio file using the Whisper model."""
-    device = "cuda" # GPU acceleration
-    batch_size = 16 # GPU memory usage
-    compute_type = "float16" # GPU accuracy
+    device = config_device # GPU acceleration
+    batch_size = config_batch_size # GPU memory usage
+    compute_type = config_compute_type # GPU accuracy
 
     # Load the Whisper model
-    model = whisperx.load_model("large-v3", device, compute_type=compute_type)
+    model = whisperx.load_model(config_model_size, device, compute_type=compute_type)
 
     # Load and process the audio file
     audio = whisperx.load_audio(audio_file)
@@ -407,8 +423,5 @@ def main():
             
 # Entry point of the script
 if __name__ == "__main__":
-    # Set up rich console for pretty printing
-    console = Console()
-
     # Run the main function
     main()
