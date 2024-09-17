@@ -402,6 +402,8 @@ def main():
                 # --------------------------------- CLEAN UP --------------------------------- #
                 # Call cleanup_files with the files you want to remove
                 cleanup_files(output_modified_file_json, output_convert_file_srt, output_process_file_srt)
+                
+                print("SUCCESS")
             
 # Entry point of the script
 if __name__ == "__main__":
