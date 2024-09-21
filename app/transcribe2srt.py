@@ -155,13 +155,22 @@ def split_text_by_length(text, words, max_length):
     
     return lines
 
-# Estimate missing word time
-def estimate_missing_time(prev_word, next_word):
-    # Safely retrieve 'end' and 'start' values, using 0 if missing
-    prev_end = prev_word.get('end', 0)
-    next_start = next_word.get('start', prev_end)  # If 'start' is missing, use prev_end
-
-    return (prev_end + next_start) / 2
+# Updated function to estimate missing time, handling consecutive missing words
+def estimate_missing_time(prev_word, next_words):
+    """Estimate the time for a word based on the previous and the next valid word with time."""
+    # Find the next word with valid 'start' and 'end' times
+    next_word = None
+    for word in next_words:
+        if "start" in word and "end" in word:
+            next_word = word
+            break
+    
+    if next_word:
+        # Estimate the missing time by averaging the previous and the next valid word's times
+        return (prev_word['end'] + next_word['start']) / 2
+    else:
+        # If no valid next word is found, return a fallback (e.g., use previous word's end time)
+        return prev_word['end']
 
 # Convert transcription to SRT with proper time formatting
 def convert_json_to_srt(transcription_segments, max_chars=30):
