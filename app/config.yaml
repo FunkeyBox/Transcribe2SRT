@@ -1,4 +1,4 @@
 device: "cuda"  # GPU acceleration
-batch_size: 16  # GPU memory usage, reduce vram 4
+batch_size: 16  # GPU memory usage, reduce vram set to 4
 compute_type: "float16"  # GPU accuracy, lighter compute type int8
 model_size: "large-v3"  # Whisper model, smaller ASR model base

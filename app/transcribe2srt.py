@@ -157,7 +157,11 @@ def split_text_by_length(text, words, max_length):
 
 # Estimate missing word time
 def estimate_missing_time(prev_word, next_word):
-    return (prev_word['end'] + next_word['start']) / 2
+    # Safely retrieve 'end' and 'start' values, using 0 if missing
+    prev_end = prev_word.get('end', 0)
+    next_start = next_word.get('start', prev_end)  # If 'start' is missing, use prev_end
+
+    return (prev_end + next_start) / 2
 
 # Convert transcription to SRT with proper time formatting
 def convert_json_to_srt(transcription_segments, max_chars=30):
